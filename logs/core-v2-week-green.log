@@ -1,0 +1,46 @@
+[0/1] Planning build
+Building for debugging...
+[0/3] Write sources
+[1/3] Write swift-version-65D24623655875F5.txt
+[3/5] Emitting module PhaseCore
+[4/5] Compiling PhaseCore PhaseCore.swift
+[5/7] Compiling PhaseCore Markdown.swift
+[6/7] Compiling PhaseCore PhaseReplica.swift
+[7/20] Wrapping AST for PhaseCore for debugging
+[9/20] Compiling PhaseCoreTests PhaseReplicaTests.swift
+[10/20] Compiling PhaseCoreTests CriticalSemanticsTests.swift
+[11/20] Compiling PhaseCoreTests PhaseCoreTests.swift
+[12/20] Compiling PhaseCoreTests AlphaV2Tests.swift
+[13/20] Emitting module PhaseCoreTests
+[14/21] /data/playground/phase-system/.build/aarch64-unknown-linux-gnu/debug/PhaseCorePackageDiscoveredTests.derived/all-discovered-tests.swift
+[15/22] Write sources
+[16/22] Wrapping AST for PhaseCoreTests for debugging
+[18/25] Compiling PhaseCorePackageDiscoveredTests all-discovered-tests.swift
+[19/25] Compiling PhaseCorePackageDiscoveredTests PhaseCoreTests.swift
+[20/25] Emitting module PhaseCorePackageDiscoveredTests
+[21/26] /data/playground/phase-system/.build/aarch64-unknown-linux-gnu/debug/PhaseCorePackageTests.derived/runner.swift
+[22/27] Write sources
+[23/27] Wrapping AST for PhaseCorePackageDiscoveredTests for debugging
+[25/29] Compiling PhaseCorePackageTests runner.swift
+[26/29] Emitting module PhaseCorePackageTests
+[27/29] Write Objects.LinkFileList
+[28/29] Linking PhaseCorePackageTests.xctest
+Build complete! (6.46s)
+Test Suite 'Selected tests' started at 2026-10-18 03:16:21.765
+Test Suite 'AlphaV2Tests' started at 2026-10-18 03:16:21.777
+Test Case 'AlphaV2Tests.testFinalDoneIsAtomicAndCombinedOnlyForDisplay' started at 2026-10-18 03:16:21.777
+Test Case 'AlphaV2Tests.testFinalDoneIsAtomicAndCombinedOnlyForDisplay' passed (0.003 seconds)
+Test Case 'AlphaV2Tests.testOldPayloadAndNewAssociationRoundTrip' started at 2026-10-18 03:16:21.780
+Test Case 'AlphaV2Tests.testOldPayloadAndNewAssociationRoundTrip' passed (0.104 seconds)
+Test Case 'AlphaV2Tests.testPhaseLifecycleAndLegacyArchiveDoNotEndTasks' started at 2026-10-18 03:16:21.883
+Test Case 'AlphaV2Tests.testPhaseLifecycleAndLegacyArchiveDoNotEndTasks' passed (0.0 seconds)
+Test Case 'AlphaV2Tests.testWeeklyAreaDaysCountDistinctDatesAndCapturedAreaOnly' started at 2026-10-18 03:16:21.883
+Test Case 'AlphaV2Tests.testWeeklyAreaDaysCountDistinctDatesAndCapturedAreaOnly' passed (0.002 seconds)
+Test Suite 'AlphaV2Tests' passed at 2026-10-18 03:16:21.886
+	 Executed 4 tests, with 0 failures (0 unexpected) in 0.109 (0.109) seconds
+Test Suite 'Selected tests' passed at 2026-10-18 03:16:21.886
+	 Executed 4 tests, with 0 failures (0 unexpected) in 0.109 (0.109) seconds
+◇ Test run started.
+↳ Testing Library Version: 6.2.4 (5ee435b15ad40ec)
+↳ Target Platform: aarch64-unknown-linux-gnu
+✔ Test run with 0 tests in 0 suites passed after 0.001 seconds.

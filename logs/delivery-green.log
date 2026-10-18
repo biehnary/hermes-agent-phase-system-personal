@@ -1,0 +1,10 @@
+test_app_entry_has_error_recovery_and_refresh (__main__.DeliveryTests.test_app_entry_has_error_recovery_and_refresh) ... ok
+test_cloud_guard_rejects_missing_team_and_container (__main__.DeliveryTests.test_cloud_guard_rejects_missing_team_and_container) ... ok
+test_no_private_json_import_or_nextstart_history_ui (__main__.DeliveryTests.test_no_private_json_import_or_nextstart_history_ui) ... ok
+test_persistence_is_disk_backed_cloudkit_and_transactional (__main__.DeliveryTests.test_persistence_is_disk_backed_cloudkit_and_transactional) ... ok
+test_projects_share_cloud_identity_without_local_entitlements (__main__.DeliveryTests.test_projects_share_cloud_identity_without_local_entitlements) ... ok
+
+----------------------------------------------------------------------
+Ran 5 tests in 0.005s
+
+OK

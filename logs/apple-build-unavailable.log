@@ -1,0 +1,1 @@
+error: Apple builds/tests require macOS with full Xcode selected. Linux syntax checks are not an Apple build.

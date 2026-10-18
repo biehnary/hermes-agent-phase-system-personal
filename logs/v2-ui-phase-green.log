@@ -1,0 +1,7 @@
+test_phase_area_switch_and_read_only_reference (__main__.AlphaV2SourceTests.test_phase_area_switch_and_read_only_reference) ... ok
+test_tasks_and_history_interactions (__main__.AlphaV2SourceTests.test_tasks_and_history_interactions) ... ok
+
+----------------------------------------------------------------------
+Ran 2 tests in 0.001s
+
+OK

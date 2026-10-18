@@ -1,0 +1,8 @@
+.build/
+.tools/
+Scripts/.cache/
+Config/Cloud.xcconfig
+*.xcuserstate
+xcuserdata/
+.DS_Store
+__pycache__/

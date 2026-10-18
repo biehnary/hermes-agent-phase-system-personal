@@ -1,0 +1,4 @@
+// Change these ONCE to identifiers you own before device/cloud distribution.
+// Both local and Cloud configurations include this file; never suffix by configuration.
+PHASE_IOS_BUNDLE_IDENTIFIER = dev.phase-system.ios
+PHASE_MAC_BUNDLE_IDENTIFIER = dev.phase-system.mac

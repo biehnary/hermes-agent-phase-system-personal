@@ -1,0 +1,94 @@
+
+=== RESUME RED missing replica changes ===
+Building for debugging...
+[0/2] Write swift-version-65D24623655875F5.txt
+[2/4] Emitting module PhaseCoreTests
+[3/4] Compiling PhaseCoreTests PhaseReplicaTests.swift
+/data/playground/phase-system/Tests/PhaseCoreTests/PhaseReplicaTests.swift:57:39: error: type 'PhaseReplica' has no member 'changes'
+ 55 |         let old = PhaseState(entries: [a, c])
+ 56 |         let new = PhaseState(entries: [updated, c, added])
+ 57 |         let writes = try PhaseReplica.changes(from: old, to: new, existing: existing, now: t0.addingTimeInterval(10))
+    |                                       `- error: type 'PhaseReplica' has no member 'changes'
+ 58 |         XCTAssertEqual(Set(writes.map(\.id)), [a.id, added.id])
+ 59 |         XCTAssertEqual(writes.count, 2)
+
+/data/playground/phase-system/Tests/PhaseCoreTests/PhaseReplicaTests.swift:58:39: error: cannot infer key path type from context; consider explicitly specifying a root type
+ 56 |         let new = PhaseState(entries: [updated, c, added])
+ 57 |         let writes = try PhaseReplica.changes(from: old, to: new, existing: existing, now: t0.addingTimeInterval(10))
+ 58 |         XCTAssertEqual(Set(writes.map(\.id)), [a.id, added.id])
+    |                                       `- error: cannot infer key path type from context; consider explicitly specifying a root type
+ 59 |         XCTAssertEqual(writes.count, 2)
+ 60 |         let merged = try PhaseReplica.state(existing + writes)
+
+/data/playground/phase-system/Tests/PhaseCoreTests/PhaseReplicaTests.swift:64:40: error: type 'PhaseReplica' has no member 'changes'
+ 62 |         XCTAssertEqual(merged.entry(c.id), c)
+ 63 |         XCTAssertEqual(merged.entry(a.id), updated)
+ 64 |         XCTAssertTrue(try PhaseReplica.changes(from: new, to: new, existing: existing + writes, now: t0).isEmpty)
+    |                                        `- error: type 'PhaseReplica' has no member 'changes'
+ 65 |         let deleted = try PhaseReplica.changes(from: new, to: PhaseState(entries: [c, added]), existing: existing + writes, now: t0)
+ 66 |         XCTAssertEqual(deleted.count, 1)
+
+/data/playground/phase-system/Tests/PhaseCoreTests/PhaseReplicaTests.swift:65:40: error: type 'PhaseReplica' has no member 'changes'
+ 63 |         XCTAssertEqual(merged.entry(a.id), updated)
+ 64 |         XCTAssertTrue(try PhaseReplica.changes(from: new, to: new, existing: existing + writes, now: t0).isEmpty)
+ 65 |         let deleted = try PhaseReplica.changes(from: new, to: PhaseState(entries: [c, added]), existing: existing + writes, now: t0)
+    |                                        `- error: type 'PhaseReplica' has no member 'changes'
+ 66 |         XCTAssertEqual(deleted.count, 1)
+ 67 |         XCTAssertEqual(deleted.first?.id, a.id)
+
+/data/playground/phase-system/Tests/PhaseCoreTests/PhaseReplicaTests.swift:81:39: error: type 'PhaseReplica' has no member 'changes'
+ 79 |         let future = t0.addingTimeInterval(100)
+ 80 |         let existing = [StoredEnvelope(id: low, value: a, modifiedAt: future, revisionID: high), StoredEnvelope(id: high, value: nil, modifiedAt: t0.addingTimeInterval(-10), revisionID: high)]
+ 81 |         let writes = try PhaseReplica.changes(from: PhaseState(entries: [a]), to: PhaseState(entries: [updated, b]), existing: existing, now: t0)
+    |                                       `- error: type 'PhaseReplica' has no member 'changes'
+ 82 |         XCTAssertEqual(writes.first { $0.id == low }?.modifiedAt, future.addingTimeInterval(0.001))
+ 83 |         XCTAssertEqual(writes.first { $0.id == high }?.modifiedAt, t0)
+
+/data/playground/phase-system/Tests/PhaseCoreTests/PhaseReplicaTests.swift:85:41: error: type 'PhaseReplica' has no member 'changes'
+ 83 |         XCTAssertEqual(writes.first { $0.id == high }?.modifiedAt, t0)
+ 84 |         XCTAssertTrue(writes.allSatisfy { $0.revisionID != high })
+ 85 |         let deletion = try PhaseReplica.changes(from: PhaseState(entries: [updated]), to: PhaseState(), existing: existing + writes, now: t0)
+    |                                         `- error: type 'PhaseReplica' has no member 'changes'
+ 86 |         XCTAssertEqual(deletion.first?.modifiedAt, future.addingTimeInterval(0.001).addingTimeInterval(0.001))
+ 87 |     }
+
+/data/playground/phase-system/Tests/PhaseCoreTests/PhaseReplicaTests.swift:93:47: error: type 'PhaseReplica' has no member 'changes'
+ 91 |         let changedKind = Entry(kind: .phase, title: "Not same entity", id: low, now: t0)
+ 92 |         let old = PhaseState(entries: [a])
+ 93 |         XCTAssertThrowsError(try PhaseReplica.changes(from: old, to: PhaseState(entries: [changedKind]), existing: [], now: t0))
+    |                                               `- error: type 'PhaseReplica' has no member 'changes'
+ 94 |         XCTAssertThrowsError(try PhaseReplica.changes(from: PhaseState(entries: [a, a]), to: old, existing: [], now: t0))
+ 95 |         XCTAssertThrowsError(try PhaseReplica.changes(from: old, to: PhaseState(entries: [a, a]), existing: [], now: t0))
+
+/data/playground/phase-system/Tests/PhaseCoreTests/PhaseReplicaTests.swift:94:47: error: type 'PhaseReplica' has no member 'changes'
+ 92 |         let old = PhaseState(entries: [a])
+ 93 |         XCTAssertThrowsError(try PhaseReplica.changes(from: old, to: PhaseState(entries: [changedKind]), existing: [], now: t0))
+ 94 |         XCTAssertThrowsError(try PhaseReplica.changes(from: PhaseState(entries: [a, a]), to: old, existing: [], now: t0))
+    |                                               `- error: type 'PhaseReplica' has no member 'changes'
+ 95 |         XCTAssertThrowsError(try PhaseReplica.changes(from: old, to: PhaseState(entries: [a, a]), existing: [], now: t0))
+ 96 |         let mismatch = StoredEnvelope(id: high, value: a, modifiedAt: t0, revisionID: high)
+
+/data/playground/phase-system/Tests/PhaseCoreTests/PhaseReplicaTests.swift:95:47: error: type 'PhaseReplica' has no member 'changes'
+ 93 |         XCTAssertThrowsError(try PhaseReplica.changes(from: old, to: PhaseState(entries: [changedKind]), existing: [], now: t0))
+ 94 |         XCTAssertThrowsError(try PhaseReplica.changes(from: PhaseState(entries: [a, a]), to: old, existing: [], now: t0))
+ 95 |         XCTAssertThrowsError(try PhaseReplica.changes(from: old, to: PhaseState(entries: [a, a]), existing: [], now: t0))
+    |                                               `- error: type 'PhaseReplica' has no member 'changes'
+ 96 |         let mismatch = StoredEnvelope(id: high, value: a, modifiedAt: t0, revisionID: high)
+ 97 |         XCTAssertThrowsError(try PhaseReplica.changes(from: old, to: old, existing: [mismatch], now: t0))
+
+/data/playground/phase-system/Tests/PhaseCoreTests/PhaseReplicaTests.swift:97:47: error: type 'PhaseReplica' has no member 'changes'
+ 95 |         XCTAssertThrowsError(try PhaseReplica.changes(from: old, to: PhaseState(entries: [a, a]), existing: [], now: t0))
+ 96 |         let mismatch = StoredEnvelope(id: high, value: a, modifiedAt: t0, revisionID: high)
+ 97 |         XCTAssertThrowsError(try PhaseReplica.changes(from: old, to: old, existing: [mismatch], now: t0))
+    |                                               `- error: type 'PhaseReplica' has no member 'changes'
+ 98 |         XCTAssertThrowsError(try PhaseReplica.changes(from: old, to: old, existing: [], now: Date(timeIntervalSince1970: .infinity)))
+ 99 |     }
+
+/data/playground/phase-system/Tests/PhaseCoreTests/PhaseReplicaTests.swift:98:47: error: type 'PhaseReplica' has no member 'changes'
+ 96 |         let mismatch = StoredEnvelope(id: high, value: a, modifiedAt: t0, revisionID: high)
+ 97 |         XCTAssertThrowsError(try PhaseReplica.changes(from: old, to: old, existing: [mismatch], now: t0))
+ 98 |         XCTAssertThrowsError(try PhaseReplica.changes(from: old, to: old, existing: [], now: Date(timeIntervalSince1970: .infinity)))
+    |                                               `- error: type 'PhaseReplica' has no member 'changes'
+ 99 |     }
+100 | 
+error: fatalError

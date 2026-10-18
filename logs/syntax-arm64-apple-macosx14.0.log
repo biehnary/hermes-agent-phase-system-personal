@@ -1,0 +1,2 @@
+Syntax only (not SDK type checking): arm64-apple-macosx14.0
+PASS: syntax parse exit 0

@@ -1,0 +1,70 @@
+[0/1] Planning build
+Building for debugging...
+[0/3] Write sources
+[1/3] Write swift-version-65D24623655875F5.txt
+[3/5] Emitting module PhaseCoreTests
+[4/5] Compiling PhaseCoreTests AlphaV2Tests.swift
+/data/playground/phase-system/Tests/PhaseCoreTests/AlphaV2Tests.swift:10:68: error: extra argument 'finalDone' in call
+ 8 |         try state.upsert(task)
+ 9 |         let now = Date(timeIntervalSince1970: 1000)
+10 |         try state.endTask(task.id, status: "completed", finalDone: "Shipped", now: now)
+   |                                                                    `- error: extra argument 'finalDone' in call
+11 |         XCTAssertEqual(state.items(.done).count, 1)
+12 |         XCTAssertEqual(state.items(.event).count, 1)
+
+/data/playground/phase-system/Tests/PhaseCoreTests/AlphaV2Tests.swift:13:30: error: value of type 'PhaseState' has no member 'recordTimeline'
+11 |         XCTAssertEqual(state.items(.done).count, 1)
+12 |         XCTAssertEqual(state.items(.event).count, 1)
+13 |         XCTAssertEqual(state.recordTimeline().count, 1)
+   |                              `- error: value of type 'PhaseState' has no member 'recordTimeline'
+14 |         XCTAssertEqual(state.recordTimeline().first?.kind, .done)
+15 |         XCTAssertEqual(state.lifecycleLabel(for: state.items(.done)[0]), "completed")
+
+/data/playground/phase-system/Tests/PhaseCoreTests/AlphaV2Tests.swift:14:30: error: value of type 'PhaseState' has no member 'recordTimeline'
+12 |         XCTAssertEqual(state.items(.event).count, 1)
+13 |         XCTAssertEqual(state.recordTimeline().count, 1)
+14 |         XCTAssertEqual(state.recordTimeline().first?.kind, .done)
+   |                              `- error: value of type 'PhaseState' has no member 'recordTimeline'
+15 |         XCTAssertEqual(state.lifecycleLabel(for: state.items(.done)[0]), "completed")
+16 |         XCTAssertEqual(state.doneDays().count, 1)
+
+/data/playground/phase-system/Tests/PhaseCoreTests/AlphaV2Tests.swift:15:30: error: value of type 'PhaseState' has no member 'lifecycleLabel'
+13 |         XCTAssertEqual(state.recordTimeline().count, 1)
+14 |         XCTAssertEqual(state.recordTimeline().first?.kind, .done)
+15 |         XCTAssertEqual(state.lifecycleLabel(for: state.items(.done)[0]), "completed")
+   |                              `- error: value of type 'PhaseState' has no member 'lifecycleLabel'
+16 |         XCTAssertEqual(state.doneDays().count, 1)
+17 |         let before = state
+
+/data/playground/phase-system/Tests/PhaseCoreTests/AlphaV2Tests.swift:18:87: error: extra argument 'finalDone' in call
+16 |         XCTAssertEqual(state.doneDays().count, 1)
+17 |         let before = state
+18 |         XCTAssertThrowsError(try state.endTask(task.id, status: "stopped", finalDone: "Again"))
+   |                                                                                       `- error: extra argument 'finalDone' in call
+19 |         XCTAssertEqual(state, before)
+20 |         try state.delete(state.items(.done)[0].id)
+
+/data/playground/phase-system/Tests/PhaseCoreTests/AlphaV2Tests.swift:21:30: error: value of type 'PhaseState' has no member 'recordTimeline'
+19 |         XCTAssertEqual(state, before)
+20 |         try state.delete(state.items(.done)[0].id)
+21 |         XCTAssertEqual(state.recordTimeline().first?.kind, .event)
+   |                              `- error: value of type 'PhaseState' has no member 'recordTimeline'
+22 |         try state.reopenTask(task.id)
+23 |         try state.endTask(task.id, status: "stopped", finalDone: "   ")
+
+/data/playground/phase-system/Tests/PhaseCoreTests/AlphaV2Tests.swift:23:66: error: extra argument 'finalDone' in call
+21 |         XCTAssertEqual(state.recordTimeline().first?.kind, .event)
+22 |         try state.reopenTask(task.id)
+23 |         try state.endTask(task.id, status: "stopped", finalDone: "   ")
+   |                                                                  `- error: extra argument 'finalDone' in call
+24 |         XCTAssertTrue(state.items(.done).isEmpty)
+25 |     }
+
+/data/playground/phase-system/Tests/PhaseCoreTests/AlphaV2Tests.swift:33:26: error: value of type 'Entry' has no member 'linkedDoneID'
+31 |         json.removeValue(forKey: "linkedDoneID")
+32 |         let old = try JSONDecoder().decode(Entry.self, from: JSONSerialization.data(withJSONObject: json))
+33 |         XCTAssertNil(old.linkedDoneID)
+   |                          `- error: value of type 'Entry' has no member 'linkedDoneID'
+34 |         XCTAssertEqual(old, entry)
+35 |     }
+error: fatalError

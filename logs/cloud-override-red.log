@@ -1,0 +1,19 @@
+test_app_entry_has_error_recovery_and_refresh (__main__.DeliveryTests.test_app_entry_has_error_recovery_and_refresh) ... ok
+test_cloud_guard_rejects_missing_team_and_container (__main__.DeliveryTests.test_cloud_guard_rejects_missing_team_and_container) ... ok
+test_no_private_json_import_or_nextstart_history_ui (__main__.DeliveryTests.test_no_private_json_import_or_nextstart_history_ui) ... ok
+test_persistence_is_disk_backed_cloudkit_and_transactional (__main__.DeliveryTests.test_persistence_is_disk_backed_cloudkit_and_transactional) ... ok
+test_projects_share_cloud_identity_without_local_entitlements (__main__.DeliveryTests.test_projects_share_cloud_identity_without_local_entitlements) ... FAIL
+
+======================================================================
+FAIL: test_projects_share_cloud_identity_without_local_entitlements (__main__.DeliveryTests.test_projects_share_cloud_identity_without_local_entitlements)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/data/playground/phase-system/Tests/test_delivery.py", line 27, in test_projects_share_cloud_identity_without_local_entitlements
+    self.assertNotIn('PHASE_CLOUDKIT_CONTAINER', spec['settings']['base'], 'Project settings must not override Cloud.xcconfig with an empty container')
+    ~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: 'PHASE_CLOUDKIT_CONTAINER' unexpectedly found in {'SWIFT_VERSION': '5.0', 'MARKETING_VERSION': '1.0.0', 'CURRENT_PROJECT_VERSION': '1', 'GENERATE_INFOPLIST_FILE': 'NO', 'ENABLE_USER_SCRIPT_SANDBOXING': 'NO', 'PHASE_CLOUDKIT_CONTAINER': ''} : Project settings must not override Cloud.xcconfig with an empty container
+
+----------------------------------------------------------------------
+Ran 5 tests in 0.005s
+
+FAILED (failures=1)

@@ -1,0 +1,85 @@
+Swift version 6.2.4 (swift-6.2.4-RELEASE)
+Target: aarch64-unknown-linux-gnu
+[0/1] Planning build
+Building for debugging...
+[0/2] Write swift-version-65D24623655875F5.txt
+Build complete! (0.19s)
+Test Suite 'All tests' started at 2026-10-17 15:41:20.808
+Test Suite 'debug.xctest' started at 2026-10-17 15:41:20.812
+Test Suite 'CriticalSemanticsTests' started at 2026-10-17 15:41:20.812
+Test Case 'CriticalSemanticsTests.testPerformedDatesIgnoreEditsEventsAndCreationAcrossDSTMonth' started at 2026-10-17 15:41:20.812
+Test Case 'CriticalSemanticsTests.testPerformedDatesIgnoreEditsEventsAndCreationAcrossDSTMonth' passed (0.001 seconds)
+Test Case 'CriticalSemanticsTests.testPhaseSpotlightUpsertRejectedAndLegacyFlagsFiltered' started at 2026-10-17 15:41:20.813
+Test Case 'CriticalSemanticsTests.testPhaseSpotlightUpsertRejectedAndLegacyFlagsFiltered' passed (0.0 seconds)
+Test Case 'CriticalSemanticsTests.testResumeUsesNonblankStartOtherwiseLatestPerformedText' started at 2026-10-17 15:41:20.814
+Test Case 'CriticalSemanticsTests.testResumeUsesNonblankStartOtherwiseLatestPerformedText' passed (0.105 seconds)
+Test Case 'CriticalSemanticsTests.testWhitespaceDoneStartReplacesOldStartAndFallsBackToDone' started at 2026-10-17 15:41:20.919
+Test Case 'CriticalSemanticsTests.testWhitespaceDoneStartReplacesOldStartAndFallsBackToDone' passed (0.106 seconds)
+Test Suite 'CriticalSemanticsTests' passed at 2026-10-17 15:41:21.025
+	 Executed 4 tests, with 0 failures (0 unexpected) in 0.213 (0.213) seconds
+Test Suite 'PhaseCoreTests' started at 2026-10-17 15:41:21.025
+Test Case 'PhaseCoreTests.testArchivingPhaseIsIndependentOfChildTasksAndHistory' started at 2026-10-17 15:41:21.025
+Test Case 'PhaseCoreTests.testArchivingPhaseIsIndependentOfChildTasksAndHistory' passed (0.002 seconds)
+Test Case 'PhaseCoreTests.testDailyDaysIncludeEventsButHeatmapOnlyIncludesPerformedDays' started at 2026-10-17 15:41:21.026
+Test Case 'PhaseCoreTests.testDailyDaysIncludeEventsButHeatmapOnlyIncludesPerformedDays' passed (0.106 seconds)
+Test Case 'PhaseCoreTests.testDeleteOnlyEphemeralRecordsNeverDeletesTaskOrCurrentStart' started at 2026-10-17 15:41:21.132
+Test Case 'PhaseCoreTests.testDeleteOnlyEphemeralRecordsNeverDeletesTaskOrCurrentStart' passed (0.002 seconds)
+Test Case 'PhaseCoreTests.testDormancyUsesCalendarMonthNotThirtyDaysAndNeverRecordedIsFalse' started at 2026-10-17 15:41:21.134
+Test Case 'PhaseCoreTests.testDormancyUsesCalendarMonthNotThirtyDaysAndNeverRecordedIsFalse' passed (0.001 seconds)
+Test Case 'PhaseCoreTests.testEditDoneDoesNotBumpPerformedDateOrCurrentStart' started at 2026-10-17 15:41:21.135
+Test Case 'PhaseCoreTests.testEditDoneDoesNotBumpPerformedDateOrCurrentStart' passed (0.001 seconds)
+Test Case 'PhaseCoreTests.testEndAndReopenRecordEventsNotDoneAndNeverAutoStar' started at 2026-10-17 15:41:21.135
+Test Case 'PhaseCoreTests.testEndAndReopenRecordEventsNotDoneAndNeverAutoStar' passed (0.0 seconds)
+Test Case 'PhaseCoreTests.testEntryDefaultsAndCodableRoundTrip' started at 2026-10-17 15:41:21.136
+Test Case 'PhaseCoreTests.testEntryDefaultsAndCodableRoundTrip' passed (0.004 seconds)
+Test Case 'PhaseCoreTests.testEqualPerformedDatesUseStableCreationAndIDTiesNotUpdatedAt' started at 2026-10-17 15:41:21.140
+Test Case 'PhaseCoreTests.testEqualPerformedDatesUseStableCreationAndIDTiesNotUpdatedAt' passed (0.006 seconds)
+Test Case 'PhaseCoreTests.testEventSnapshotAndMarkdownStayInOriginalScopeAfterMove' started at 2026-10-17 15:41:21.146
+Test Case 'PhaseCoreTests.testEventSnapshotAndMarkdownStayInOriginalScopeAfterMove' passed (0.002 seconds)
+Test Case 'PhaseCoreTests.testHistoryUsesCapturedPhaseAndAreaAcrossTaskMoves' started at 2026-10-17 15:41:21.148
+Test Case 'PhaseCoreTests.testHistoryUsesCapturedPhaseAndAreaAcrossTaskMoves' passed (0.0 seconds)
+Test Case 'PhaseCoreTests.testInvalidDomainValuesRollbackWithoutPartiallyChangingState' started at 2026-10-17 15:41:21.148
+Test Case 'PhaseCoreTests.testInvalidDomainValuesRollbackWithoutPartiallyChangingState' passed (0.001 seconds)
+Test Case 'PhaseCoreTests.testInvalidMutationTimestampRollsBackEveryMutationPath' started at 2026-10-17 15:41:21.149
+Test Case 'PhaseCoreTests.testInvalidMutationTimestampRollsBackEveryMutationPath' passed (0.0 seconds)
+Test Case 'PhaseCoreTests.testManualTaskRanksAreIndependentOfSpotlightAndActivity' started at 2026-10-17 15:41:21.149
+Test Case 'PhaseCoreTests.testManualTaskRanksAreIndependentOfSpotlightAndActivity' passed (0.0 seconds)
+Test Case 'PhaseCoreTests.testMarkdownExportsAllDurableContentOnceWithReadableCapturedScope' started at 2026-10-17 15:41:21.149
+Test Case 'PhaseCoreTests.testMarkdownExportsAllDurableContentOnceWithReadableCapturedScope' passed (0.003 seconds)
+Test Case 'PhaseCoreTests.testRecordingReplacesCurrentStartIncludingBlankAndKeepsPerformedOrder' started at 2026-10-17 15:41:21.152
+Test Case 'PhaseCoreTests.testRecordingReplacesCurrentStartIncludingBlankAndKeepsPerformedOrder' passed (0.0 seconds)
+Test Case 'PhaseCoreTests.testTaskOnlySpotlightAppendsReordersAndRejectsPhases' started at 2026-10-17 15:41:21.152
+Test Case 'PhaseCoreTests.testTaskOnlySpotlightAppendsReordersAndRejectsPhases' passed (0.0 seconds)
+Test Case 'PhaseCoreTests.testUpsertNewStarAppendsAndEndedTaskCannotRetainStar' started at 2026-10-17 15:41:21.153
+Test Case 'PhaseCoreTests.testUpsertNewStarAppendsAndEndedTaskCannotRetainStar' passed (0.0 seconds)
+Test Case 'PhaseCoreTests.testUpsertSnapshotCapturesScopeAndCannotRewriteHistoricalPlacement' started at 2026-10-17 15:41:21.153
+Test Case 'PhaseCoreTests.testUpsertSnapshotCapturesScopeAndCannotRewriteHistoricalPlacement' passed (0.0 seconds)
+Test Case 'PhaseCoreTests.testValidatedUpsertIsAtomicAndKeepsCreationDate' started at 2026-10-17 15:41:21.153
+Test Case 'PhaseCoreTests.testValidatedUpsertIsAtomicAndKeepsCreationDate' passed (0.0 seconds)
+Test Suite 'PhaseCoreTests' passed at 2026-10-17 15:41:21.153
+	 Executed 19 tests, with 0 failures (0 unexpected) in 0.128 (0.128) seconds
+Test Suite 'PhaseReplicaTests' started at 2026-10-17 15:41:21.153
+Test Case 'PhaseReplicaTests.testChangeTimestampsAreMonotonicPerKeyEvenWhenClockMovesBackward' started at 2026-10-17 15:41:21.153
+Test Case 'PhaseReplicaTests.testChangeTimestampsAreMonotonicPerKeyEvenWhenClockMovesBackward' passed (0.001 seconds)
+Test Case 'PhaseReplicaTests.testChangesAreMinimalAndPreserveRemoteSiblingAdditions' started at 2026-10-17 15:41:21.154
+Test Case 'PhaseReplicaTests.testChangesAreMinimalAndPreserveRemoteSiblingAdditions' passed (0.001 seconds)
+Test Case 'PhaseReplicaTests.testChangesValidateDuplicateAndSharedIdentityBeforeWriting' started at 2026-10-17 15:41:21.155
+Test Case 'PhaseReplicaTests.testChangesValidateDuplicateAndSharedIdentityBeforeWriting' passed (0.106 seconds)
+Test Case 'PhaseReplicaTests.testEnvelopeCodableIncludesTombstonesAndRevision' started at 2026-10-17 15:41:21.261
+Test Case 'PhaseReplicaTests.testEnvelopeCodableIncludesTombstonesAndRevision' passed (0.001 seconds)
+Test Case 'PhaseReplicaTests.testStateSortsWinnerPayloadsByIdentity' started at 2026-10-17 15:41:21.262
+Test Case 'PhaseReplicaTests.testStateSortsWinnerPayloadsByIdentity' passed (0.0 seconds)
+Test Case 'PhaseReplicaTests.testTombstoneWinsExactTieAndOlderLiveRowsCannotResurrect' started at 2026-10-17 15:41:21.263
+Test Case 'PhaseReplicaTests.testTombstoneWinsExactTieAndOlderLiveRowsCannotResurrect' passed (0.106 seconds)
+Test Case 'PhaseReplicaTests.testWinnersResolveDuplicatesByTimestampRevisionAndPayloadInAnyOrder' started at 2026-10-17 15:41:21.369
+Test Case 'PhaseReplicaTests.testWinnersResolveDuplicatesByTimestampRevisionAndPayloadInAnyOrder' passed (0.004 seconds)
+Test Suite 'PhaseReplicaTests' passed at 2026-10-17 15:41:21.373
+	 Executed 7 tests, with 0 failures (0 unexpected) in 0.219 (0.219) seconds
+Test Suite 'debug.xctest' passed at 2026-10-17 15:41:21.373
+	 Executed 30 tests, with 0 failures (0 unexpected) in 0.56 (0.56) seconds
+Test Suite 'All tests' passed at 2026-10-17 15:41:21.373
+	 Executed 30 tests, with 0 failures (0 unexpected) in 0.56 (0.56) seconds
+◇ Test run started.
+↳ Testing Library Version: 6.2.4 (5ee435b15ad40ec)
+↳ Target Platform: aarch64-unknown-linux-gnu
+✔ Test run with 0 tests in 0 suites passed after 0.001 seconds.

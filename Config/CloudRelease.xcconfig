@@ -1,0 +1,6 @@
+#include "Identity.xcconfig"
+// Optional only so LOCAL builds can load the project before cloud enrollment.
+// Scripts/check-cloud-config.sh makes this file mandatory for Cloud builds.
+#include? "Cloud.xcconfig"
+PHASE_APNS_ENVIRONMENT = production
+PHASE_CLOUDKIT_ENVIRONMENT = Production

@@ -1,0 +1,3 @@
+#include "Identity.xcconfig"
+PHASE_CLOUDKIT_CONTAINER =
+CODE_SIGNING_ALLOWED = NO

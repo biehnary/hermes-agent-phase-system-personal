@@ -1,0 +1,62 @@
+[0/1] Planning build
+Building for debugging...
+[0/10] Write sources
+[1/10] Write swift-version-65D24623655875F5.txt
+[3/11] Emitting module PhaseCoreTests
+[4/11] Compiling PhaseCoreTests AlphaV2Tests.swift
+/data/playground/phase-system/Tests/PhaseCoreTests/AlphaV2Tests.swift:10:30: error: value of type 'PhaseState' has no member 'phaseStatus'
+ 8 |         phase.archived = true
+ 9 |         try state.upsert(phase)
+10 |         XCTAssertEqual(state.phaseStatus(phase), "completed")
+   |                              `- error: value of type 'PhaseState' has no member 'phaseStatus'
+11 |         var task = Entry(kind: .task, title: "Work")
+12 |         task.phaseID = phase.id
+
+/data/playground/phase-system/Tests/PhaseCoreTests/AlphaV2Tests.swift:14:19: error: value of type 'PhaseState' has no member 'setPhaseStatus'
+12 |         task.phaseID = phase.id
+13 |         try state.upsert(task)
+14 |         try state.setPhaseStatus(phase.id, status: "stopped")
+   |                   `- error: value of type 'PhaseState' has no member 'setPhaseStatus'
+15 |         XCTAssertEqual(state.phaseStatus(state.entry(phase.id)!), "stopped")
+16 |         XCTAssertEqual(state.currentTasks().map(\.id), [task.id])
+
+/data/playground/phase-system/Tests/PhaseCoreTests/AlphaV2Tests.swift:15:30: error: value of type 'PhaseState' has no member 'phaseStatus'
+13 |         try state.upsert(task)
+14 |         try state.setPhaseStatus(phase.id, status: "stopped")
+15 |         XCTAssertEqual(state.phaseStatus(state.entry(phase.id)!), "stopped")
+   |                              `- error: value of type 'PhaseState' has no member 'phaseStatus'
+16 |         XCTAssertEqual(state.currentTasks().map(\.id), [task.id])
+17 |         try state.setPhaseStatus(phase.id, status: "active")
+
+/data/playground/phase-system/Tests/PhaseCoreTests/AlphaV2Tests.swift:16:30: error: value of type 'PhaseState' has no member 'currentTasks'
+14 |         try state.setPhaseStatus(phase.id, status: "stopped")
+15 |         XCTAssertEqual(state.phaseStatus(state.entry(phase.id)!), "stopped")
+16 |         XCTAssertEqual(state.currentTasks().map(\.id), [task.id])
+   |                              `- error: value of type 'PhaseState' has no member 'currentTasks'
+17 |         try state.setPhaseStatus(phase.id, status: "active")
+18 |         XCTAssertFalse(state.entry(phase.id)!.archived)
+
+/data/playground/phase-system/Tests/PhaseCoreTests/AlphaV2Tests.swift:16:49: error: cannot infer key path type from context; consider explicitly specifying a root type
+14 |         try state.setPhaseStatus(phase.id, status: "stopped")
+15 |         XCTAssertEqual(state.phaseStatus(state.entry(phase.id)!), "stopped")
+16 |         XCTAssertEqual(state.currentTasks().map(\.id), [task.id])
+   |                                                 `- error: cannot infer key path type from context; consider explicitly specifying a root type
+17 |         try state.setPhaseStatus(phase.id, status: "active")
+18 |         XCTAssertFalse(state.entry(phase.id)!.archived)
+
+/data/playground/phase-system/Tests/PhaseCoreTests/AlphaV2Tests.swift:17:19: error: value of type 'PhaseState' has no member 'setPhaseStatus'
+15 |         XCTAssertEqual(state.phaseStatus(state.entry(phase.id)!), "stopped")
+16 |         XCTAssertEqual(state.currentTasks().map(\.id), [task.id])
+17 |         try state.setPhaseStatus(phase.id, status: "active")
+   |                   `- error: value of type 'PhaseState' has no member 'setPhaseStatus'
+18 |         XCTAssertFalse(state.entry(phase.id)!.archived)
+19 |         XCTAssertThrowsError(try state.setPhaseStatus(phase.id, status: "invalid"))
+
+/data/playground/phase-system/Tests/PhaseCoreTests/AlphaV2Tests.swift:19:40: error: value of type 'PhaseState' has no member 'setPhaseStatus'
+17 |         try state.setPhaseStatus(phase.id, status: "active")
+18 |         XCTAssertFalse(state.entry(phase.id)!.archived)
+19 |         XCTAssertThrowsError(try state.setPhaseStatus(phase.id, status: "invalid"))
+   |                                        `- error: value of type 'PhaseState' has no member 'setPhaseStatus'
+20 |     }
+21 | }
+error: fatalError

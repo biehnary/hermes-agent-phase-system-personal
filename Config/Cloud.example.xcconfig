@@ -1,0 +1,6 @@
+// Copy to Cloud.xcconfig and fill the two empty values. Do not commit that file.
+// Select your real Apple Developer Team and one shared CloudKit container for BOTH targets.
+DEVELOPMENT_TEAM =
+PHASE_CLOUDKIT_CONTAINER =
+CODE_SIGN_STYLE = Automatic
+CODE_SIGNING_ALLOWED = YES

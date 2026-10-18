@@ -1,0 +1,22 @@
+[0/1] Planning build
+Building for debugging...
+[0/3] Write sources
+[1/3] Write swift-version-65D24623655875F5.txt
+[3/5] Emitting module PhaseCoreTests
+[4/5] Compiling PhaseCoreTests AlphaV2Tests.swift
+/data/playground/phase-system/Tests/PhaseCoreTests/AlphaV2Tests.swift:25:29: error: value of type 'PhaseState' has no member 'performedAreaDays'
+23 |         try state.addDone(taskID: nil, text: "Boundary excluded", date: interval.end)
+24 |         try state.endTask(task.id, status: "stopped", now: day.addingTimeInterval(2 * 86400))
+25 |         let summary = state.performedAreaDays(in: interval, calendar: calendar)
+   |                             `- error: value of type 'PhaseState' has no member 'performedAreaDays'
+26 |         XCTAssertEqual(summary.first { $0.areaID == area.id }?.days, 2)
+27 |         XCTAssertEqual(summary.first { $0.areaID == nil }?.days, 1)
+
+/data/playground/phase-system/Tests/PhaseCoreTests/AlphaV2Tests.swift:31:30: error: value of type 'PhaseState' has no member 'performedAreaDays'
+29 |         task.lifecycle = "stopped"
+30 |         try state.upsert(task)
+31 |         XCTAssertEqual(state.performedAreaDays(in: interval, calendar: calendar), summary)
+   |                              `- error: value of type 'PhaseState' has no member 'performedAreaDays'
+32 |     }
+33 | 
+error: fatalError

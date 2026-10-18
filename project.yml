@@ -1,0 +1,209 @@
+{
+  "name": "PhaseSystem",
+  "options": {
+    "minimumXcodeGenVersion": "2.44.1",
+    "xcodeVersion": "16.0",
+    "deploymentTarget": {
+      "iOS": "17.0",
+      "macOS": "14.0"
+    },
+    "defaultConfig": "Debug",
+    "createIntermediateGroups": true
+  },
+  "configs": {
+    "Debug": "debug",
+    "Release": "release",
+    "CloudDebug": "debug",
+    "CloudRelease": "release"
+  },
+  "configFiles": {
+    "Debug": "Config/Local.xcconfig",
+    "Release": "Config/Local.xcconfig",
+    "CloudDebug": "Config/CloudDebug.xcconfig",
+    "CloudRelease": "Config/CloudRelease.xcconfig"
+  },
+  "packages": {
+    "PhaseCore": {
+      "path": "."
+    }
+  },
+  "settings": {
+    "base": {
+      "SWIFT_VERSION": "5.0",
+      "MARKETING_VERSION": "1.0.0",
+      "CURRENT_PROJECT_VERSION": "1",
+      "GENERATE_INFOPLIST_FILE": "NO",
+      "ENABLE_USER_SCRIPT_SANDBOXING": "NO"
+    }
+  },
+  "targets": {
+    "PhaseSystem": {
+      "type": "application",
+      "platform": "iOS",
+      "sources": [
+        {
+          "path": "App"
+        }
+      ],
+      "dependencies": [
+        {
+          "package": "PhaseCore"
+        }
+      ],
+      "settings": {
+        "base": {
+          "PRODUCT_BUNDLE_IDENTIFIER": "$(PHASE_IOS_BUNDLE_IDENTIFIER)",
+          "INFOPLIST_FILE": "Config/Info-iOS.plist",
+          "TARGETED_DEVICE_FAMILY": "1,2",
+          "SUPPORTS_MACCATALYST": "NO",
+          "SUPPORTS_MAC_DESIGNED_FOR_IPHONE_IPAD": "NO"
+        },
+        "configs": {
+          "Debug": {
+            "CODE_SIGN_ENTITLEMENTS": ""
+          },
+          "Release": {
+            "CODE_SIGN_ENTITLEMENTS": ""
+          },
+          "CloudDebug": {
+            "CODE_SIGN_ENTITLEMENTS": "Config/iOS-Cloud.entitlements"
+          },
+          "CloudRelease": {
+            "CODE_SIGN_ENTITLEMENTS": "Config/iOS-Cloud.entitlements"
+          }
+        }
+      },
+      "preBuildScripts": [
+        {
+          "name": "Validate explicit Cloud configuration",
+          "script": "\"${SRCROOT}/Scripts/check-cloud-config.sh\"",
+          "basedOnDependencyAnalysis": false
+        }
+      ]
+    },
+    "PhaseSystemMac": {
+      "type": "application",
+      "platform": "macOS",
+      "sources": [
+        {
+          "path": "App"
+        }
+      ],
+      "dependencies": [
+        {
+          "package": "PhaseCore"
+        }
+      ],
+      "settings": {
+        "base": {
+          "PRODUCT_BUNDLE_IDENTIFIER": "$(PHASE_MAC_BUNDLE_IDENTIFIER)",
+          "INFOPLIST_FILE": "Config/Info-macOS.plist"
+        },
+        "configs": {
+          "Debug": {
+            "CODE_SIGN_ENTITLEMENTS": "Config/macOS-Local.entitlements"
+          },
+          "Release": {
+            "CODE_SIGN_ENTITLEMENTS": "Config/macOS-Local.entitlements"
+          },
+          "CloudDebug": {
+            "CODE_SIGN_ENTITLEMENTS": "Config/macOS-Cloud.entitlements"
+          },
+          "CloudRelease": {
+            "CODE_SIGN_ENTITLEMENTS": "Config/macOS-Cloud.entitlements"
+          }
+        }
+      },
+      "preBuildScripts": [
+        {
+          "name": "Validate explicit Cloud configuration",
+          "script": "\"${SRCROOT}/Scripts/check-cloud-config.sh\"",
+          "basedOnDependencyAnalysis": false
+        }
+      ]
+    },
+    "PhasePersistenceTests": {
+      "type": "bundle.unit-test",
+      "platform": "macOS",
+      "sources": [
+        {
+          "path": "Tests/ApplePersistenceTests"
+        }
+      ],
+      "dependencies": [
+        {
+          "target": "PhaseSystemMac"
+        },
+        {
+          "package": "PhaseCore"
+        }
+      ],
+      "settings": {
+        "base": {
+          "PRODUCT_BUNDLE_IDENTIFIER": "$(PHASE_MAC_BUNDLE_IDENTIFIER).tests",
+          "GENERATE_INFOPLIST_FILE": "YES"
+        }
+      }
+    }
+  },
+  "schemes": {
+    "PhaseSystem": {
+      "build": {
+        "targets": {
+          "PhaseSystem": "all"
+        }
+      },
+      "run": {
+        "config": "Debug"
+      },
+      "archive": {
+        "config": "Release"
+      }
+    },
+    "PhaseSystemCloud": {
+      "build": {
+        "targets": {
+          "PhaseSystem": "all"
+        }
+      },
+      "run": {
+        "config": "CloudDebug"
+      },
+      "archive": {
+        "config": "CloudRelease"
+      }
+    },
+    "PhaseSystemMac": {
+      "build": {
+        "targets": {
+          "PhaseSystemMac": "all"
+        }
+      },
+      "run": {
+        "config": "Debug"
+      },
+      "archive": {
+        "config": "Release"
+      },
+      "test": {
+        "config": "Debug",
+        "targets": [
+          "PhasePersistenceTests"
+        ]
+      }
+    },
+    "PhaseSystemMacCloud": {
+      "build": {
+        "targets": {
+          "PhaseSystemMac": "all"
+        }
+      },
+      "run": {
+        "config": "CloudDebug"
+      },
+      "archive": {
+        "config": "CloudRelease"
+      }
+    }
+  }
+}
