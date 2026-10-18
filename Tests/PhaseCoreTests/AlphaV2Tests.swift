@@ -2,6 +2,33 @@ import XCTest
 @testable import PhaseCore
 
 final class AlphaV2Tests: XCTestCase {
+    func testFinalRecordDateCorrectionPreservesEventDate() throws {
+        var state = PhaseState()
+        let task = Entry(kind: .task, title: "Done")
+        try state.upsert(task)
+        try state.endTask(task.id, status: "completed", finalDone: "Finished", now: Date(timeIntervalSince1970: 100))
+        let done = state.items(.done)[0]
+        try state.editDone(id: done.id, text: "Corrected", notes: "", date: Date(timeIntervalSince1970: 200))
+        XCTAssertEqual(state.recordTimeline().count, 2)
+        XCTAssertNil(state.lifecycleLabel(for: state.entry(done.id)!))
+        XCTAssertEqual(state.items(.event)[0].date, Date(timeIntervalSince1970: 100))
+        XCTAssertFalse(state.markdown().contains(done.id.uuidString))
+    }
+
+    func testPhaseStatusExportAndValidation() throws {
+        var state = PhaseState()
+        var phase = Entry(kind: .phase, title: "Context")
+        phase.lifecycle = "stopped"
+        try state.upsert(phase)
+        XCTAssertTrue(state.markdown().contains("상태: 중단"))
+        phase.lifecycle = "invalid"
+        XCTAssertThrowsError(try state.upsert(phase))
+        var legacy = Entry(kind: .phase, title: "Legacy")
+        legacy.archived = true
+        try state.upsert(legacy)
+        XCTAssertTrue(state.markdown().contains("상태: 완료"))
+    }
+
     func testWeeklyAreaDaysCountDistinctDatesAndCapturedAreaOnly() throws {
         var calendar = Calendar(identifier: .gregorian)
         calendar.timeZone = TimeZone(secondsFromGMT: 0)!
@@ -43,6 +70,12 @@ final class AlphaV2Tests: XCTestCase {
         XCTAssertEqual(state.recordTimeline().first?.kind, .done)
         XCTAssertEqual(state.lifecycleLabel(for: state.items(.done)[0]), "completed")
         XCTAssertEqual(state.doneDays().count, 1)
+        let decoded = try JSONDecoder().decode(PhaseState.self, from: JSONEncoder().encode(state))
+        XCTAssertEqual(decoded, state)
+        let revisions = try PhaseReplica.changes(from: PhaseState(), to: state, existing: [], now: now)
+        let restored = try PhaseReplica.state(revisions)
+        XCTAssertEqual(restored.recordTimeline().count, 1)
+        XCTAssertEqual(restored.items(.event)[0].linkedDoneID, restored.items(.done)[0].id)
         let before = state
         XCTAssertThrowsError(try state.endTask(task.id, status: "stopped", finalDone: "Again"))
         XCTAssertEqual(state, before)

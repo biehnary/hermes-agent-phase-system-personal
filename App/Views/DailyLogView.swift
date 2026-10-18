@@ -3,78 +3,118 @@ import SwiftUI
 
 struct DailyLogView: View {
   @Environment(AppStore.self) private var store
-  @State private var selectedDay: Date?
-  @State private var datesExpanded = false
+  @AppStorage("v2.daily.mode") private var mode = "week"
+  @State private var selectedDate = Date()
   @State private var sheet: EditorRoute?
   private let calendar = Calendar.current
-  private var days: [Date] { store.state.dailyDays(calendar: calendar) }
-  private var effectiveDay: Date? {
-    if let selectedDay, days.contains(selectedDay) { return selectedDay }
-    return days.first
+  private var week: DateInterval {
+    calendar.dateInterval(of: .weekOfYear, for: selectedDate)!
   }
-  private var doneDays: [Date] { store.state.doneDays(calendar: calendar).sorted(by: >) }
-  private var records: [Entry] {
-    guard let day = effectiveDay else { return [] }
-    return store.state.entries.filter {
-      ($0.kind == .done || $0.kind == .event) && calendar.isDate($0.date, inSameDayAs: day)
-    }.sorted { $0.date == $1.date ? $0.id.uuidString < $1.id.uuidString : $0.date > $1.date }
+  private var weekDays: [Date] {
+    (0..<7).compactMap { calendar.date(byAdding: .day, value: $0, to: week.start) }
+  }
+  private var doneDays: Set<Date> { store.state.doneDays(calendar: calendar) }
+  private var monthCells: [Date?] {
+    let start = calendar.dateInterval(of: .month, for: selectedDate)!.start
+    let leading = (calendar.component(.weekday, from: start) - calendar.firstWeekday + 7) % 7
+    let count = calendar.range(of: .day, in: .month, for: start)!.count
+    return Array(repeating: nil, count: leading)
+      + (0..<count).map { calendar.date(byAdding: .day, value: $0, to: start) }
+  }
+  private var weekdayNames: [String] {
+    let names = calendar.veryShortStandaloneWeekdaySymbols
+    return (0..<7).map { names[($0 + calendar.firstWeekday - 1) % 7] }
+  }
+  private func records(_ day: Date) -> [Entry] {
+    store.state.recordTimeline().filter { calendar.isDate($0.date, inSameDayAs: day) }
   }
   var body: some View {
-    List {
-      Section("Performed days") {
-        Text("One mark per day with a Done record. Lifecycle events do not contribute.").font(
-          .caption
-        ).foregroundStyle(.secondary)
-        if doneDays.isEmpty { Text("No performed days yet.").foregroundStyle(.secondary) }
-        LazyVGrid(
-          columns: [GridItem(.adaptive(minimum: 60, maximum: 90))], alignment: .leading, spacing: 12
-        ) {
-          ForEach(doneDays, id: \.self) { day in
-            Button {
-              selectedDay = day
-            } label: {
-              VStack(spacing: 5) {
-                Image(systemName: effectiveDay == day ? "square.inset.filled" : "square.fill")
-                Text(day.formatted(.dateTime.month(.abbreviated).day())).font(.caption2)
-                Text(day.formatted(.dateTime.year())).font(.caption2).foregroundStyle(.secondary)
-              }.frame(maxWidth: .infinity).padding(.vertical, 5)
-            }
-            .buttonStyle(.plain)
-            .accessibilityLabel("Performed day \(day.formatted(date: .complete, time: .omitted))")
-            .accessibilityAddTraits(effectiveDay == day ? [.isSelected] : [])
-          }
-        }
-      }
-      Section("Dates with records") {
-        if days.isEmpty {
-          Text("No records yet. Record something you performed to begin.").foregroundStyle(
-            .secondary)
-        }
-        DisclosureGroup("All dates (\(days.count))", isExpanded: $datesExpanded) {
-          ForEach(days, id: \.self) { day in
-            Button {
-              selectedDay = day
-            } label: {
-              HStack {
-                Text(day.formatted(date: .complete, time: .omitted))
-                Spacer()
-                if effectiveDay == day {
-                  Image(systemName: "checkmark").accessibilityLabel("Selected")
-                }
+    ScrollViewReader { proxy in
+      List {
+        Section {
+          Picker("Calendar", selection: $mode) {
+            Text("Week").tag("week"); Text("Month").tag("month")
+          }.pickerStyle(.segmented)
+          HStack {
+            Button("Previous", systemImage: "chevron.left") { shift(-1) }.labelStyle(.iconOnly).help("Previous \(mode)")
+            Spacer()
+            Text(mode == "month"
+                 ? selectedDate.formatted(.dateTime.year().month(.wide))
+                 : "\(week.start.formatted(.dateTime.month(.abbreviated).day())) – \(weekDays.last!.formatted(.dateTime.month(.abbreviated).day().year()))")
+              .font(.subheadline)
+            Spacer()
+            Button("Next", systemImage: "chevron.right") { shift(1) }.labelStyle(.iconOnly).help("Next \(mode)")
+          }.buttonStyle(.borderless)
+          if mode == "month" {
+            LazyVGrid(columns: Array(repeating: GridItem(.flexible(), spacing: 2), count: 7), spacing: 6) {
+              ForEach(weekdayNames.indices, id: \.self) { Text(weekdayNames[$0]).font(.caption).foregroundStyle(.secondary) }
+              ForEach(monthCells.indices, id: \.self) { index in
+                if let day = monthCells[index] { dayButton(day, showWeekday: false) }
+                else { Color.clear.frame(height: 42).accessibilityHidden(true) }
               }
-            }.buttonStyle(.plain)
+            }
+          } else {
+            HStack(spacing: 2) {
+              ForEach(weekDays, id: \.self) { day in dayButton(day, showWeekday: true) }
+            }
+          }
+        }
+        if mode == "week" {
+          let summary = store.state.performedAreaDays(in: week, calendar: calendar)
+          if !summary.isEmpty {
+            Section {
+              ForEach(summary) { item in Text("\(item.title) · \(item.days) days").font(.caption).foregroundStyle(.secondary) }
+            } header: { Text("Performed days by Area").font(.caption) }
+          }
+          // The week remains visible in full. Selecting a day scrolls, never filters the week.
+          ForEach(weekDays, id: \.self) { day in
+            let dayRecords = records(day)
+            if !dayRecords.isEmpty || calendar.isDate(day, inSameDayAs: selectedDate) {
+              Section(day.formatted(date: .complete, time: .omitted)) {
+                ForEach(dayRecords) { RecordRow(entry: $0) }
+                if dayRecords.isEmpty { Text("No records").foregroundStyle(.secondary) }
+              }.id(calendar.startOfDay(for: day))
+            }
+          }
+        } else {
+          Section(selectedDate.formatted(date: .complete, time: .omitted)) {
+            let dayRecords = records(selectedDate)
+            ForEach(dayRecords) { RecordRow(entry: $0) }
+            if dayRecords.isEmpty { Text("No records").foregroundStyle(.secondary) }
           }
         }
       }
-      if let day = effectiveDay {
-        Section(day.formatted(date: .complete, time: .omitted)) {
-          ForEach(records) { entry in RecordRow(entry: entry) }
-        }
+      .onChange(of: selectedDate) { _, day in
+        if mode == "week" { withAnimation { proxy.scrollTo(calendar.startOfDay(for: day), anchor: .top) } }
       }
-      Section {
-        Button("Record Done without a task", systemImage: "checkmark") { sheet = .done(nil) }
+    }
+    .toolbar {
+      ToolbarItem(placement: .primaryAction) {
+        Button("Record Done", systemImage: "checkmark.circle") { sheet = .done(nil) }
+          .labelStyle(.iconOnly).help("Record Done without a task")
       }
     }
     .sheet(item: $sheet) { EditorSheet(route: $0) }
+  }
+  private func shift(_ direction: Int) {
+    if let next = calendar.date(byAdding: mode == "month" ? .month : .weekOfYear, value: direction, to: selectedDate) {
+      selectedDate = next
+    }
+  }
+  private func dayButton(_ day: Date, showWeekday: Bool) -> some View {
+    let selected = calendar.isDate(day, inSameDayAs: selectedDate)
+    let performed = doneDays.contains(calendar.startOfDay(for: day))
+    return Button { selectedDate = day } label: {
+      VStack(spacing: 3) {
+        if showWeekday { Text(day.formatted(.dateTime.weekday(.narrow))).font(.caption2) }
+        Text(day.formatted(.dateTime.day())).font(.subheadline)
+        Circle().fill(performed ? Color.accentColor : Color.clear).frame(width: 4, height: 4)
+      }.frame(maxWidth: .infinity, minHeight: 42)
+        .background(selected ? Color.accentColor.opacity(0.13) : Color.clear, in: RoundedRectangle(cornerRadius: 6))
+    }
+    .buttonStyle(.plain)
+    .accessibilityLabel(day.formatted(date: .complete, time: .omitted))
+    .accessibilityValue(performed ? "Performed" : "No performed record")
+    .accessibilityAddTraits(selected ? [.isSelected] : [])
   }
 }

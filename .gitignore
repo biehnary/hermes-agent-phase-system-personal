@@ -6,3 +6,34 @@ Config/Cloud.xcconfig
 xcuserdata/
 .DS_Store
 __pycache__/
+
+# Xcode/SwiftPM machine-local state and build output
+.swiftpm/
+DerivedData/
+build/
+*.xcarchive
+*.ipa
+*.dSYM/
+*.xcresult/
+
+# Local credentials/signing and runtime databases/exports
+.env
+.env.*
+!.env.example
+*.p12
+*.p8
+*.pem
+*.key
+*.mobileprovision
+*.provisionprofile
+*.sqlite
+*.sqlite-*
+*.store
+*.store-*
+Phase-System.md
+
+# Publish only reviewed, reproducible verification output.
+# Ignore rules do NOT remove files already staged/tracked by the user.
+logs/*
+!logs/v2-verification.log
+!logs/v2-source-gates.log

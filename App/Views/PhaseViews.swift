@@ -88,7 +88,7 @@ struct ClassificationDetailView: View {
             }
             Section("Tasks") {
               let tasks = linkedTasks(item)
-              ForEach(Array(tasks.prefix(tasksLimit))) { EntryLink(entry: $0).listRowBackground(taskCardColor($0)) }
+              ForEach(Array(tasks.prefix(tasksLimit))) { EntryLink(entry: $0, showLifecycle: true).listRowBackground(taskCardColor($0)) }
               MoreControls(total: tasks.count, limit: $tasksLimit)
               if item.kind == .phase && store.state.phaseStatus(item) == "active" {
                 Button("Add Task", systemImage: "plus.rectangle") {

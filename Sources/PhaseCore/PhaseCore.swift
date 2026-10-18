@@ -185,7 +185,7 @@ public struct PhaseState: Codable, Equatable, Sendable {
     }
     public func latestDone(taskID: UUID) -> Entry? { history(taskID: taskID).first }
     public func lifecycleLabel(for done: Entry) -> String? {
-        entries.first { $0.kind == .event && $0.linkedDoneID == done.id }?.text
+        entries.first { $0.kind == .event && $0.linkedDoneID == done.id && $0.date == done.date }?.text
     }
 
     /// Combine a final Done and its lifecycle event for presentation only.
@@ -316,6 +316,9 @@ public struct PhaseState: Codable, Equatable, Sendable {
             guard ["general", "quick"].contains(value.taskKind), ["active", "completed", "stopped"].contains(value.lifecycle) else {
                 throw PhaseError.invalid("작업 유형 또는 상태가 올바르지 않습니다.")
             }
+        }
+        if value.kind == .phase, !["active", "completed", "stopped"].contains(value.lifecycle) {
+            throw PhaseError.invalid("국면 상태가 올바르지 않습니다.")
         }
         if value.kind == .event, !["completed", "stopped", "reopened"].contains(value.text) {
             throw PhaseError.invalid("상태 이력 값이 올바르지 않습니다.")

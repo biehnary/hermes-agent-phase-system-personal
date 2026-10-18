@@ -31,11 +31,10 @@ struct TasksView: View {
     return "\(area?.title ?? "Unassigned") / \(phase?.title ?? "Unassigned")"
   }
   // Identity is the placement, not the display name (duplicate phase names are allowed).
-  private var groups: [[Entry]] {
+  private var groups: [TaskGroup] {
     let grouped = Dictionary(grouping: tasks) { $0.phaseID?.uuidString ?? areaKey($0) }
-    return grouped.values.sorted {
-      let a = groupTitle($0[0]), b = groupTitle($1[0])
-      return a == b ? $0[0].id.uuidString < $1[0].id.uuidString : a.localizedStandardCompare(b) == .orderedAscending
+    return grouped.map { TaskGroup(id: $0.key, title: groupTitle($0.value[0]), entries: $0.value) }.sorted {
+      $0.title == $1.title ? $0.id < $1.id : $0.title.localizedStandardCompare($1.title) == .orderedAscending
     }
   }
   var body: some View {
@@ -63,9 +62,9 @@ struct TasksView: View {
       if filtered { Text("Filters / sort active").font(.caption).foregroundStyle(.secondary) }
       if tasks.isEmpty { Text("No matching tasks").foregroundStyle(.secondary) }
       if sort == "grouped" {
-        ForEach(groups, id: \.first!.id) { group in
-          Section(groupTitle(group[0])) {
-            ForEach(group) { TaskListRow(entry: $0) }
+        ForEach(groups) { group in
+          Section(group.title) {
+            ForEach(group.entries) { TaskListRow(entry: $0) }
           }
         }
       } else {
@@ -92,6 +91,12 @@ struct TasksView: View {
       areaSelection = values.sorted().joined(separator: "|")
     }))
   }
+}
+
+private struct TaskGroup: Identifiable {
+  let id: String
+  let title: String
+  let entries: [Entry]
 }
 
 struct EndedTasksView: View {
@@ -294,6 +299,33 @@ struct RecordRow: View {
   @State private var sheet: EditorRoute?
   @State private var deleting = false
   var body: some View {
+    Group {
+      if showTaskLink, let taskID = entry.taskID, store.state.entry(taskID) != nil {
+        NavigationLink { TaskDetailView(id: taskID) } label: { recordContent }
+      } else { recordContent }
+    }
+      .swipeActions(edge: .trailing, allowsFullSwipe: false) {
+        if entry.kind == .done {
+          Button("Delete record", systemImage: "trash", role: .destructive) { deleting = true }
+            .labelStyle(.iconOnly).help("Delete record").tint(.red)
+          Button("Edit record", systemImage: "pencil") { sheet = .editDone(entry) }
+            .labelStyle(.iconOnly).help("Edit record").tint(.blue)
+        }
+      }
+      .contextMenu {
+        if entry.kind == .done {
+          Button("Edit record", systemImage: "pencil") { sheet = .editDone(entry) }
+          Button("Delete record", systemImage: "trash", role: .destructive) { deleting = true }
+        }
+      }
+      .sheet(item: $sheet) { EditorSheet(route: $0) }
+      .confirmationDialog("Delete this record?", isPresented: $deleting) {
+        Button("Delete record", role: .destructive) { _ = store.apply { try $0.delete(entry.id) } }
+      } message: {
+        Text("Only the performed record is removed, not the task or lifecycle history. Current next start is unchanged.")
+      }
+  }
+  private var recordContent: some View {
     VStack(alignment: .leading, spacing: 8) {
       if entry.kind == .event {
         Text("Task \(entry.text)").font(.caption).foregroundStyle(.secondary)
@@ -308,26 +340,5 @@ struct RecordRow: View {
       }
       Text(entry.date.formatted(date: .abbreviated, time: .shortened)).font(.caption).foregroundStyle(.secondary)
     }.padding(.vertical, 6)
-      .swipeActions(edge: .trailing, allowsFullSwipe: false) {
-        if entry.kind == .done {
-          Button("Delete record", systemImage: "trash", role: .destructive) { deleting = true }.tint(.red)
-          Button("Edit record", systemImage: "pencil") { sheet = .editDone(entry) }.tint(.blue)
-        }
-      }
-      .contextMenu {
-        if entry.kind == .done {
-          Button("Edit record", systemImage: "pencil") { sheet = .editDone(entry) }
-          Button("Delete record", systemImage: "trash", role: .destructive) { deleting = true }
-        }
-        if showTaskLink, let taskID = entry.taskID, store.state.entry(taskID) != nil {
-          NavigationLink("Open Task") { TaskDetailView(id: taskID) }
-        }
-      }
-      .sheet(item: $sheet) { EditorSheet(route: $0) }
-      .confirmationDialog("Delete this record?", isPresented: $deleting) {
-        Button("Delete record", role: .destructive) { _ = store.apply { try $0.delete(entry.id) } }
-      } message: {
-        Text("Only the performed record is removed, not the task or lifecycle history. Current next start is unchanged.")
-      }
   }
 }

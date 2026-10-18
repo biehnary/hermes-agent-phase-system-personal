@@ -261,8 +261,10 @@ struct InboxView: View {
           Text(entry.createdAt, style: .date).font(.caption).foregroundStyle(.secondary)
         }.padding(.vertical, 6)
           .swipeActions(edge: .trailing, allowsFullSwipe: false) {
-            Button("Delete", systemImage: "trash", role: .destructive) { deleting = entry }.tint(.red)
-            Button("Edit", systemImage: "pencil") { sheet = .entry(entry) }.tint(.blue)
+            Button("Delete", systemImage: "trash", role: .destructive) { deleting = entry }
+              .labelStyle(.iconOnly).help("Delete inbox item").tint(.red)
+            Button("Edit", systemImage: "pencil") { sheet = .entry(entry) }
+              .labelStyle(.iconOnly).help("Edit inbox item").tint(.blue)
           }
           .contextMenu {
             Button("Edit", systemImage: "pencil") { sheet = .entry(entry) }

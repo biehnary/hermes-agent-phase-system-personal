@@ -81,15 +81,13 @@ struct RootView: View {
       }
       .navigationTitle(screen.rawValue)
       .toolbar {
-        ToolbarItemGroup(placement: .primaryAction) {
-          Menu {
-            Button("Add Task", systemImage: "plus.rectangle") { sheet = .entry(Entry(kind: .task)) }
-            Button("Record Done", systemImage: "checkmark") { sheet = .done(nil) }
-            Button("Inbox", systemImage: "tray") { sheet = .inboxList }
-            Divider()
-            Button("Export all Markdown", systemImage: "square.and.arrow.up") { exporting = true }
-          } label: {
-            Label("Actions", systemImage: "ellipsis.circle")
+        if screen == .phases {
+          ToolbarItem(placement: .secondaryAction) {
+            Menu {
+              Button("Export all Markdown", systemImage: "square.and.arrow.up") { exporting = true }
+            } label: {
+              Label("Export actions", systemImage: "square.and.arrow.up")
+            }
           }
         }
       }
@@ -158,6 +156,7 @@ extension View {
 
 struct EntryLink: View {
   let entry: Entry
+  var showLifecycle = false
   var body: some View {
     NavigationLink {
       if entry.kind == .task {
@@ -166,7 +165,7 @@ struct EntryLink: View {
         ClassificationDetailView(id: entry.id)
       }
     } label: {
-      EntryLabel(entry: entry)
+      EntryLabel(entry: entry, showLifecycle: showLifecycle)
     }
   }
 }
@@ -174,26 +173,29 @@ struct EntryLink: View {
 struct EntryLabel: View {
   @Environment(AppStore.self) private var store
   let entry: Entry
+  var showLifecycle = false
   var body: some View {
     VStack(alignment: .leading, spacing: 5) {
       HStack {
         Text(entry.title).foregroundStyle(.primary)
-        if entry.kind == .task && entry.isSpotlight {
-          Image(systemName: "star.fill").font(.caption).accessibilityLabel("In Spotlight")
-        }
       }
       if entry.kind == .task {
         Text(entry.taskKind == "quick" ? "Quick" : "General").font(.caption).foregroundStyle(
           .secondary)
-        if entry.lifecycle != "active" {
+        if showLifecycle || entry.lifecycle != "active" {
           Text(entry.lifecycle.capitalized).font(.caption).foregroundStyle(.secondary)
+            .padding(.horizontal, 6).padding(.vertical, 2)
+            .background(Color.secondary.opacity(0.1), in: Capsule())
         }
         if store.state.isDormant(taskID: entry.id) {
           Text("No record in the past month").font(.caption).foregroundStyle(.secondary)
         }
       } else {
-        Text(entry.kind.rawValue.capitalized + (entry.archived ? " · Archived" : "")).font(.caption)
+        Text(entry.kind == .phase ? store.state.phaseStatus(entry).capitalized : "Area").font(.caption)
           .foregroundStyle(.secondary)
+        if entry.kind == .phase, let area = entry.areaID.flatMap({ store.state.entry($0) }) {
+          Text(area.title).font(.caption).foregroundStyle(.secondary)
+        }
       }
     }.padding(.vertical, 4)
   }
@@ -201,48 +203,108 @@ struct EntryLabel: View {
 
 struct SpotlightView: View {
   @Environment(AppStore.self) private var store
+  @State private var selection = Set<UUID>()
+  @State private var removed = Set<UUID>()
+  @State private var previousOrder: [UUID] = []
+  #if os(iOS)
+    @State private var editMode: EditMode = .inactive
+  #endif
   var body: some View {
-    List {
-      if store.state.spotlight.isEmpty {
-        Text("Star tasks to keep them here.").foregroundStyle(.secondary)
+    spotlightList
+      .safeAreaInset(edge: .top) {
+        Text(store.syncSummary).font(.caption2).foregroundStyle(.secondary)
+          .frame(maxWidth: .infinity, alignment: .leading).padding(.horizontal).padding(.vertical, 4)
       }
+      .safeAreaInset(edge: .bottom) {
+        if !removed.isEmpty {
+          HStack {
+            Text("Removed from Spotlight").font(.caption)
+            Spacer()
+            Button("Undo", systemImage: "arrow.uturn.backward") { undoRemoval() }
+            Button("Dismiss", systemImage: "xmark") { removed = []; previousOrder = [] }
+              .labelStyle(.iconOnly).help("Dismiss")
+          }.padding().background(.regularMaterial)
+        }
+      }
+      .toolbar {
+        #if os(iOS)
+          ToolbarItem(placement: .secondaryAction) { EditButton() }
+        #endif
+        ToolbarItem(placement: .primaryAction) {
+          if !selection.isEmpty {
+            Button("Remove selected", systemImage: "star.slash") { remove(selection) }
+              .labelStyle(.iconOnly).help("Remove selected from Spotlight")
+          }
+        }
+      }
+      #if os(iOS)
+        .environment(\.editMode, $editMode)
+      #endif
+  }
+  private var spotlightList: some View {
+    // Native selection preserves two-finger List selection where supported by iOS.
+    // No custom single-finger drag gesture competes with the reorder handles.
+    List(selection: $selection) {
+      if store.state.spotlight.isEmpty { Text("Star tasks to keep them here.").foregroundStyle(.secondary) }
       ForEach(store.state.spotlight) { entry in
         NavigationLink {
           TaskDetailView(id: entry.id)
         } label: {
           VStack(alignment: .leading, spacing: 5) {
-            Text(entry.title).foregroundStyle(.primary)
-            Text(entry.phaseID.flatMap { store.state.entry($0)?.title } ?? "Unassigned")
+            Text("\(areaTitle(entry)) / \(entry.phaseID.flatMap { store.state.entry($0)?.title } ?? "Unassigned")")
               .font(.caption).foregroundStyle(.secondary)
+            Text(entry.title).foregroundStyle(.primary)
+            Text(entry.taskKind == "quick" ? "Quick" : "General").font(.caption2).foregroundStyle(.secondary)
             let resume = store.state.resume(taskID: entry.id)
-            Text(resume.isEmpty ? "No starting point recorded." : resume)
-              .font(.subheadline).foregroundStyle(.secondary).lineLimit(2)
+            if !resume.isEmpty { Text(resume).font(.subheadline).foregroundStyle(.secondary).lineLimit(2) }
           }.padding(.vertical, 4)
         }
-        .contextMenu {
-          Button("Move up", systemImage: "arrow.up") { shift(entry.id, by: -1) }
-            .disabled(store.state.spotlight.first?.id == entry.id)
-          Button("Move down", systemImage: "arrow.down") { shift(entry.id, by: 1) }
-            .disabled(store.state.spotlight.last?.id == entry.id)
+        .tag(entry.id)
+        .listRowBackground(taskCardColor(entry))
+        .swipeActions(edge: .trailing, allowsFullSwipe: true) {
+          Button("Remove from Spotlight", systemImage: "star.slash") { remove([entry.id]) }.tint(.gray)
         }
+        .accessibilityAction(named: Text("Remove from Spotlight")) { remove([entry.id]) }
       }
       .onMove { source, target in
         var ids = store.state.spotlight.map(\.id)
         ids.move(fromOffsets: source, toOffset: target)
         _ = store.apply { try $0.reorderSpotlight(ids) }
       }
-      Section { Text(store.syncSummary).font(.caption).foregroundStyle(.secondary) }
-    }
-    .toolbar {
-      #if os(iOS)
-        ToolbarItem(placement: .secondaryAction) { EditButton() }
-      #endif
     }
   }
-  private func shift(_ id: UUID, by delta: Int) {
-    var ids = store.state.spotlight.map(\.id)
-    guard let index = ids.firstIndex(of: id), ids.indices.contains(index + delta) else { return }
-    ids.swapAt(index, index + delta)
-    _ = store.apply { try $0.reorderSpotlight(ids) }
+  private func areaTitle(_ task: Entry) -> String {
+    let id = task.phaseID.flatMap { store.state.entry($0)?.areaID } ?? task.areaID
+    return id.flatMap { store.state.entry($0)?.title } ?? "Unassigned"
+  }
+  private func remove(_ ids: Set<UUID>) {
+    let order = store.state.spotlight.map(\.id)
+    let targets = ids.intersection(order)
+    guard !targets.isEmpty else { return }
+    var actuallyRemoved = Set<UUID>()
+    if store.apply({ state in
+      for id in targets {
+        if state.entry(id)?.isSpotlight == true {
+          try state.toggleSpotlight(id)
+          actuallyRemoved.insert(id)
+        }
+      }
+    }) {
+      removed = actuallyRemoved; previousOrder = order; selection.subtract(targets)
+    }
+  }
+  private func undoRemoval() {
+    if store.apply({ state in
+      for id in removed {
+        if let task = state.entry(id), task.lifecycle == "active", !task.archived, !task.isSpotlight {
+          try state.toggleSpotlight(id)
+        }
+      }
+      let current = state.spotlight.map(\.id)
+      let existing = Set(current)
+      let original = previousOrder.filter { existing.contains($0) }
+      let restored = Set(original)
+      try state.reorderSpotlight(original + current.filter { !restored.contains($0) })
+    }) { removed = []; previousOrder = [] }
   }
 }

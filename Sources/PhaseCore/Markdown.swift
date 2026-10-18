@@ -27,7 +27,10 @@ extension PhaseState {
                 if let id = value.areaID, let area = entry(id) { output += ["영역: \(area.title)", ""] }
                 if let id = value.phaseID, let phase = entry(id) { output += ["국면: \(phase.title)", ""] }
                 if value.taskID != nil { output += ["작업: \(value.title)", ""] }
-                if value.archived { output += ["상태: 보관", ""] }
+                if kind == .phase {
+                    output += ["상태: \(readableStatus(phaseStatus(value)))", ""]
+                    if value.archived { output += ["과거 국면 (보관)", ""] }
+                } else if value.archived { output += ["상태: 보관", ""] }
                 if kind == .task {
                     output += ["유형: \(value.taskKind == "quick" ? "빠른 작업" : "일반 작업")", "상태: \(readableStatus(value.lifecycle))", ""]
                 }
